@@ -72,7 +72,7 @@ void update() {
     /**
      * ORBIT EFFECT
      */
-    gAngle += 0.05f;
+    gAngle += ORBIT_SPEED;
     gPosition.x = ORIGIN.x + RADIUS * std::cos(gAngle);
     gPosition.y = ORIGIN.y + RADIUS * std::sin(gAngle);
 
