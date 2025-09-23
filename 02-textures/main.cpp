@@ -1,31 +1,26 @@
-#include "CS3113/cs3113.h"
 #include <math.h>
+#include <raylib.h>
+
+#include "CS3113/cs3113.h"
 
 enum Member { MURDOC, TWO_D, RUSSEL, NOODLE };
 int quad = 0;
 // Global Constants
-constexpr int   SCREEN_WIDTH  = 1600 / 2,
-                SCREEN_HEIGHT = 900 / 2,
-                FPS           = 60,
-                SIZE          = 200,
-                FRAME_LIMIT   = 100;
-constexpr float MAX_AMP       = 10.0f;
+constexpr int SCREEN_WIDTH = 1600 / 2, SCREEN_HEIGHT = 900 / 2, FPS = 60, SIZE = 200, FRAME_LIMIT = 100;
+constexpr float MAX_AMP = 10.0f;
 
-constexpr char    BG_COLOUR[] = "#000000";
-constexpr Vector2 ORIGIN      = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
-constexpr Vector2 BASE_SIZE   = { (float) SIZE, (float) SIZE };
+constexpr char BG_COLOUR[] = "#000000";
+constexpr Vector2 ORIGIN = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+constexpr Vector2 BASE_SIZE = {(float)SIZE, (float)SIZE};
 
 // Image owned by Gorillaz @see https://gorillaz.com/
 constexpr char ALBUM_COVER_FP[] = "assets/demon_days.png";
 
 // Global Variables
-AppStatus gAppStatus     = RUNNING;
-float     gScaleFactor   = SIZE,
-          gAngle         = 0.0f,
-          gPulseTime     = 0.0f,
-          gPreviousTicks = 0.0f;
-Vector2   gPosition      = ORIGIN;
-Vector2   gScale         = BASE_SIZE;
+AppStatus gAppStatus = RUNNING;
+float gScaleFactor = SIZE, gAngle = 0.0f, gPulseTime = 0.0f, gPreviousTicks = 0.0f;
+Vector2 gPosition = ORIGIN;
+Vector2 gScale = BASE_SIZE;
 
 int gFrameCounter = 0;
 
@@ -39,8 +34,7 @@ void render();
 void shutdown();
 
 // Function Definitions
-void initialise()
-{
+void initialise() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Textures");
 
     gTexture = LoadTexture(ALBUM_COVER_FP);
@@ -48,17 +42,15 @@ void initialise()
     SetTargetFPS(FPS);
 }
 
-void processInput() 
-{
+void processInput() {
     if (WindowShouldClose()) gAppStatus = TERMINATED;
 }
 
-void update() 
-{
+void update() {
     /**
      * @todo Calculate delta time
      */
-    float ticks = (float) GetTime();
+    float ticks = (float)GetTime();
     float deltaTime = ticks - gPreviousTicks;
     gPreviousTicks = ticks;
 
@@ -67,17 +59,14 @@ void update()
      */
     gPulseTime += 1.0f * deltaTime;
 
-    gScale = {
-        BASE_SIZE.x + MAX_AMP * cos(gPulseTime),
-        BASE_SIZE.y + MAX_AMP * cos(gPulseTime)
-    };
+    gScale = {BASE_SIZE.x + MAX_AMP * cos(gPulseTime), BASE_SIZE.y + MAX_AMP * cos(gPulseTime)};
 
     /**
      * @todo Switch member every 100 fames
-     * 
+     *
      */
     gFrameCounter++;
-    if(gFrameCounter < 100){
+    if (gFrameCounter < 100) {
         return;
     }
     quad += 1;
@@ -88,8 +77,7 @@ void update()
     // }
 }
 
-void render()
-{
+void render() {
     BeginDrawing();
     ClearBackground(ColorFromHex(BG_COLOUR));
 
@@ -97,84 +85,62 @@ void render()
      * @todo Design your UV coordinates (i.e. textureArea) so that only one
      * member is being rendered onto the screen.
      */
-    
+
     Rectangle picture;
-    switch(quad % 4){
+    switch (quad % 4) {
         case 0:
-            picture = {0.0f, 0.0f,
-            static_cast<float>(gTexture.width/2),
-            static_cast<float>(gTexture.height/2)};
+            picture = {0.0f, 0.0f, static_cast<float>(gTexture.width / 2),
+                       static_cast<float>(gTexture.height / 2)};
             break;
         case 1:
-            picture = {static_cast<float>(gTexture.width/2), 0.0f,
-            static_cast<float>(gTexture.width/2),
-            static_cast<float>(gTexture.height/2)};
+            picture = {static_cast<float>(gTexture.width / 2), 0.0f, static_cast<float>(gTexture.width / 2),
+                       static_cast<float>(gTexture.height / 2)};
             break;
-        case 2: //
-            picture = {static_cast<float>(gTexture.height/2),static_cast<float>(gTexture.width/2),
-            static_cast<float>(gTexture.width/2),
-            static_cast<float>(gTexture.height/2)};
+        case 2:  //
+            picture = {static_cast<float>(gTexture.height / 2), static_cast<float>(gTexture.width / 2),
+                       static_cast<float>(gTexture.width / 2), static_cast<float>(gTexture.height / 2)};
             break;
-        case 3: 
-            picture = {0.0f,static_cast<float>(gTexture.width/2),
-                static_cast<float>(gTexture.width/2),
-                static_cast<float>(gTexture.height/2)};
-                break;
-
+        case 3:
+            picture = {0.0f, static_cast<float>(gTexture.width / 2), static_cast<float>(gTexture.width / 2),
+                       static_cast<float>(gTexture.height / 2)};
+            break;
     }
 
     // Rectangle textureArea = {
     //     // top-left corner
-         
+
     //     0.0f, 0.0f,
 
     //     // bottom-right corner (of texture)
     //     static_cast<float>(gTexture.width/2),
     //     static_cast<float>(gTexture.height/2)
-        
-      
+
     //    //static_cast<float>(gTexture.height)/2,  static_cast<float>(gTexture.width/2),
     //     //static_cast<float>(gTexture.width/2), static_cast<float>(gTexture.height)
-        
+
     // };
 
-
     // Destination rectangle – centred on gPosition
-    Rectangle destinationArea = {
-        gPosition.x,
-        gPosition.y,
-        static_cast<float>(gScale.x),
-        static_cast<float>(gScale.y)
-    };
+    Rectangle destinationArea = {gPosition.x, gPosition.y, static_cast<float>(gScale.x),
+                                 static_cast<float>(gScale.y)};
 
     // Origin inside the source texture (centre of the texture)
-    Vector2 objectOrigin = {
-        static_cast<float>(gScale.x) / 2.0f,
-        static_cast<float>(gScale.y) / 2.0f
-    };
+    Vector2 objectOrigin = {static_cast<float>(gScale.x) / 2.0f, static_cast<float>(gScale.y) / 2.0f};
 
     // Render the texture on screen
-    DrawTexturePro(
-        gTexture, 
-        picture, 
-        destinationArea, 
-        objectOrigin, 
-        gAngle, 
-        WHITE
-    );
-    
+    DrawTexturePro(gTexture, picture, destinationArea, objectOrigin, gAngle, WHITE);
 
     EndDrawing();
 }
 
-void shutdown() { CloseWindow(); }
+void shutdown() {
+    CloseWindow();
+}
 
-int main(void)
-{
+int main(void) {
     initialise();
 
-    while (gAppStatus == RUNNING)
-    {
+    while (gAppStatus == RUNNING) {
         processInput();
         update();
         render();
