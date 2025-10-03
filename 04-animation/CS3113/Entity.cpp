@@ -124,7 +124,7 @@ void Entity::togglePowerUp() {
     if (mWitchStatus == IDLE) {
         mWitchStatus = POWERING_UP;
         setSpriteSheetDimensions({8, 1});
-        setScale({450.0f, 250.0f});
+        setScale({500.0f, 250.0f});
     } else {
         mWitchStatus = IDLE;
         setSpriteSheetDimensions({6, 1});
